@@ -23,8 +23,10 @@ import android.widget.Toast;
 
 import com.ezon.sportwatch.ble.BLEManager;
 import com.ezon.sportwatch.ble.BluetoothLERequest;
+import com.ezon.sportwatch.ble.action.entity.FileNameHolder;
 import com.ezon.sportwatch.ble.callback.OnBleRequestCallback;
 import com.ezon.sportwatch.ble.callback.OnBluetoothDeviceSearchListener;
+import com.ezon.sportwatch.ble.outercallback.OnDeviceConnectListener;
 
 public class MainActivity extends Activity implements OnClickListener, OnItemClickListener {
 	private Handler mHandler;
@@ -44,6 +46,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
 		findViewById(R.id.checknewdata).setOnClickListener(this);
 		findViewById(R.id.checkfilelist).setOnClickListener(this);
 		findViewById(R.id.getfiledata).setOnClickListener(this);
+		findViewById(R.id.getmissingdata).setOnClickListener(this);
 
 		currdevice = (TextView) findViewById(R.id.currdevice);
 
@@ -75,7 +78,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
 						break;
 					case SEARCHING_DONE:
 						break;
-					case OnBluetoothDeviceSearchListener.SEARCH_ERROR_BLUETOOTH_OPENFAIL:
+					case SEARCH_ERROR_BLUETOOTH_OPENFAIL:
 						Toast.makeText(getBaseContext(), "蓝牙打开失败", Toast.LENGTH_SHORT).show();
 						break;
 					}
@@ -135,16 +138,58 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
 			});
 			break;
 		case R.id.checkfilelist:
-			BluetoothLERequest.getFileList();
+			BluetoothLERequest.getFileList(new OnBleRequestCallback<List<FileNameHolder>>() {
+
+				@Override
+				public void onCallback(int status, List<FileNameHolder> t) {
+					if (status == STATUS_SUCEESS) {
+						fileHolderList = t;
+						Toast.makeText(getBaseContext(), "size :" + t.size(), Toast.LENGTH_SHORT).show();
+						for (FileNameHolder holder : t) {
+							holder.diyplay();
+						}
+					} else {
+						Toast.makeText(getBaseContext(), "getFileList fail", Toast.LENGTH_SHORT).show();
+					}
+				}
+			});
 			break;
 		case R.id.getfiledata:
-			// getFileData(fileHolderList.get(1));
+			if (fileHolderList == null) {
+				Toast.makeText(getBaseContext(), "call checkfilelist", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			for (int i = 0; i < fileHolderList.size(); i++) {
+				final int _temp = i;
+				BluetoothLERequest.getFileData(fileHolderList.get(i), new OnBleRequestCallback<Integer>() {
+
+					@Override
+					public void onCallback(int status, Integer t) {
+						if (status == STATUS_SUCEESS) {
+							Toast.makeText(getBaseContext(), "getFileData file _temp:" + _temp + ",no: " + t.intValue(), Toast.LENGTH_SHORT).show();
+						} else {
+							Toast.makeText(getBaseContext(), "getFileData fail file _temp :" + _temp, Toast.LENGTH_SHORT).show();
+						}
+					}
+				});
+			}
+			break;
+		case R.id.getmissingdata:
+			BluetoothLERequest.getMissingPackageData(10, 15, new OnBleRequestCallback<Integer>() {
+
+				@Override
+				public void onCallback(int status, Integer t) {
+
+				}
+			});
 			break;
 		default:
 			break;
 		}
 
 	}
+
+	private List<FileNameHolder> fileHolderList;
 
 	private void checkBleAvailable() {
 		if (BLEManager.getInstance().isEnableBle()) {
@@ -158,7 +203,23 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		BluetoothDevice device = (BluetoothDevice) mLeDeviceListAdapter.getItem(position);
-		BLEManager.getInstance().connect(device);
+		BLEManager.getInstance().connect(device, new OnDeviceConnectListener() {
+
+			@Override
+			public void onConnect(int state, BluetoothDevice device) {
+				String address = device == null ? "" : device.getAddress();
+				switch (state) {
+				case DEVICE_CONNECTED:
+					currdevice.setText("连接成功 :" + address);
+					Toast.makeText(getBaseContext(), "连接成功", Toast.LENGTH_SHORT).show();
+					break;
+				case DEVICE_CONNECT_FAIL:
+					currdevice.setText("连接失败 :" + address);
+					Toast.makeText(getBaseContext(), "连接失败", Toast.LENGTH_SHORT).show();
+					break;
+				}
+			}
+		});
 	}
 
 	/******************* 适配器 *************************/

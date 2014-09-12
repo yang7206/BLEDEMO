@@ -23,6 +23,15 @@ public class BleUtils {
 		return stringBuilder.toString();
 	}
 
+	public static String byteArrayToString(byte[] value, int length) {
+		int max = Math.min(length, value.length);
+		StringBuilder stringBuilder = new StringBuilder("");
+		for (int i = 0; i < max; i++) {
+			stringBuilder.append((char) value[i]);
+		}
+		return stringBuilder.toString();
+	}
+
 	public static int byteToHexInt(byte b) {
 		return Integer.parseInt(Integer.toHexString(b), 16);
 	}
@@ -32,8 +41,17 @@ public class BleUtils {
 	}
 
 	public static SimpleDateFormat getFormatter() {
-		SimpleDateFormat format = new SimpleDateFormat("yy-mm-dd",Locale.CHINA);
+		SimpleDateFormat format = new SimpleDateFormat("yy-mm-dd", Locale.CHINA);
 		return format;
+	}
+	
+
+	public static byte[] getByte() {
+		byte[] b = new byte[20];
+		for (int i = 0; i < b.length; i++) {
+			b[i] = 0000;
+		}
+		return b;
 	}
 
 }

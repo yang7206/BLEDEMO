@@ -24,10 +24,7 @@ public class BluetoothLESearcher {
 
 	private boolean mScanning = false;
 
-	private BLEManager mBLEManager;
-
-	protected BluetoothLESearcher(BLEManager manager) {
-		this.mBLEManager = manager;
+	protected BluetoothLESearcher() {
 	}
 
 	protected void startSearch(OnBluetoothDeviceSearchListener listener) {
@@ -41,8 +38,7 @@ public class BluetoothLESearcher {
 	}
 
 	private void initBluetoothAdapter() {
-		mBluetoothAdapter = mBLEManager.getAdapter();
-		if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+		if (!BLEManager.getInstance().isBluetoothAdapterEnable()) {
 			BLEManager.getInstance().openBluetooth(new OnBlueToothOpenResultListener() {
 
 				@Override
@@ -60,6 +56,7 @@ public class BluetoothLESearcher {
 	}
 
 	private void scanLeDevice() {
+		mBluetoothAdapter = BLEManager.getInstance().getAdapter();
 		BLEManager.getHandler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
@@ -72,12 +69,15 @@ public class BluetoothLESearcher {
 	private void startScan() {
 		mScanning = true;
 		callbackSearch(OnBluetoothDeviceSearchListener.SEARCHING_READY, null);
+		System.out.println("");
 		mBluetoothAdapter.startLeScan(mLeScanCallback);
 	}
 
 	private void stopScan(boolean callback) {
 		mScanning = false;
-		mBluetoothAdapter.stopLeScan(mLeScanCallback);
+		if (mBluetoothAdapter != null){
+			mBluetoothAdapter.stopLeScan(mLeScanCallback);
+		}
 		if (callback) {
 			callbackSearch(OnBluetoothDeviceSearchListener.SEARCHING_DONE, null);
 		}

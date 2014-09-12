@@ -1,6 +1,5 @@
 package com.ezon.sportwatch.ble;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 
 import com.ezon.sportwatch.ble.callback.OnActivityResultCallback;
@@ -17,7 +16,7 @@ public class BlueToothOpener implements OnActivityResultCallback {
 
 	public static final int REQUEST_ENABLE_BT = 999;
 
-	public BlueToothOpener() {
+	protected BlueToothOpener() {
 	}
 
 	public void openBlueTooth(OnBlueToothOpenResultListener l) {
@@ -29,8 +28,7 @@ public class BlueToothOpener implements OnActivityResultCallback {
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_ENABLE_BT) {
-			BluetoothAdapter adapter = BLEManager.getInstance().getAdapter();
-			if (adapter != null && adapter.isEnabled()) {
+			if (BLEManager.getInstance().isBluetoothAdapterEnable()) {
 				mListener.onOpenResult(true);
 			} else {
 				mListener.onOpenResult(false);
