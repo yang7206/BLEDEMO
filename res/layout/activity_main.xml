@@ -1,0 +1,93 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="horizontal"
+    tools:context="com.example.demo.MainActivity" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/checkbleavailable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="checkble" />
+
+            <Button
+                android:id="@+id/scan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="scan" />
+
+            <Button
+                android:id="@+id/sendaskcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="sendAskCode" />
+
+            <Button
+                android:id="@+id/gettypecode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="gettypecode" />
+
+            <Button
+                android:id="@+id/clearaskcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="clearaskcode" />
+
+            <Button
+                android:id="@+id/checknewdata"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="checknewdata" />
+            <Button
+                android:id="@+id/checkfilelist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="checkfilelist" />
+            <Button
+                android:id="@+id/getfiledata"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="getfiledata" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/currdevice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="aaaa"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/connectstate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <ListView
+        android:id="@+id/devicelist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.8"
+        android:divider="#000000" >
+    </ListView>
+
+</LinearLayout>
